@@ -1,8 +1,10 @@
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ErrorStatistics {
     public static void main(String[] args) {
         if (args.length < 2) {
-            System.out.println("Не указаны пути к файлам");
+            log.error("Не указаны пути к файлам");
             return;
         }
         

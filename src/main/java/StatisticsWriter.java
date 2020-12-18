@@ -1,5 +1,6 @@
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -9,11 +10,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.Formatter;
 import java.util.Map;
 
 /**
  * Statistics writer.
  */
+@Slf4j
 @RequiredArgsConstructor
 class StatisticsWriter {
     
@@ -49,7 +52,7 @@ class StatisticsWriter {
             try {
                 Files.createDirectories(directoryPath);
             } catch (IOException e) {
-                System.out.println("Не удалось создать дерикторию по указанному пути");
+                log.error("Не удалось создать дерикторию по указанному пути");
                 System.exit(0);
             }
         }
@@ -63,18 +66,27 @@ class StatisticsWriter {
     private void writeStatistics(Map<LocalDateTime, Integer> statistics) {
         try (BufferedWriter bufferedWriter = new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(pathToFile + STATISTICS_FILE_NAME), StandardCharsets.UTF_8))) {
-            LocalDateTime date;
             for (Map.Entry<LocalDateTime, Integer> entries : statistics.entrySet()) {
-                date = entries.getKey();
-                int beginHour = date.getHour();
-                String endHour = beginHour == 23 ? "00" : String.valueOf(beginHour + 1);
-                bufferedWriter.write(
-                        date.getYear() + "-" + date.getMonth().getValue() + "-" + date.getDayOfMonth() + ", " + beginHour + ".00-" + endHour + ".00 "
-                                + "Количество " + "ошибок: " + entries.getValue() + "\n");
+                bufferedWriter.write(getResult(entries.getKey(), entries.getValue()));
             }
-            System.out.println("Статистика создана");
+            log.info("Статистика создана");
         } catch (IOException e) {
-            System.out.println("Ошибка при создании файла статистики");
+            log.error("Ошибка при создании файла статистики");
         }
+    }
+    
+    /**
+     * Get string about date and count of error for writing.
+     *
+     * @param date date of error.
+     * @param errorCount count of error.
+     * @return formatter string.
+     */
+    private String getResult(LocalDateTime date, int errorCount) {
+        int beginHour = date.getHour();
+        int endHour = beginHour == 23 ? 0 : beginHour + 1;
+        Formatter formatter = new Formatter();
+        return formatter.format("%02d-%02d-%02d, %02d.00-%02d.00 Количество ошибок: %d\n", date.getYear(), date.getMonth().getValue(),
+                                date.getDayOfMonth(), beginHour, endHour, errorCount).toString();
     }
 }

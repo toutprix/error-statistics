@@ -20,7 +20,8 @@ public class StatisticsWriterTest {
         StatisticsWriter statisticsWriter = new StatisticsWriter(logReader, tempFolder.getRoot().getAbsolutePath());
         statisticsWriter.createStatistics();
         List<String> strings = Files.readAllLines(Path.of(tempFolder.getRoot().getAbsolutePath() + "Statistics.txt"));
-        MatcherAssert.assertThat(strings, CoreMatchers.hasItem("2019-10-10, 10.00-11.00 Количество ошибок: 2"));
+        String expectResult =  "2019-10-10, 10.00-11.00 Количество ошибок: 2";
+        MatcherAssert.assertThat(strings, CoreMatchers.hasItem(expectResult));
         tempFolder.delete();
     }
 }

@@ -1,5 +1,6 @@
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
 /**
  * Log reader.
  */
+@Slf4j
 @RequiredArgsConstructor
 class LogReader implements ILogReader {
     
@@ -56,12 +58,12 @@ class LogReader implements ILogReader {
     private File[] getLogFiles() {
         File filesDir = new File(pathToLogFilesDir);
         if (!filesDir.exists()) {
-            System.out.println("Дериктории не существует");
+            log.error("Дериктории не существует");
             System.exit(0);
         }
         File[] listFiles = filesDir.listFiles((dir, name) -> name.endsWith(".log"));
         if (listFiles == null) {
-            System.out.println("Не нейдено *.log файлов для чтения");
+            log.error("Не нейдено *.log файлов для чтения");
             System.exit(0);
         }
         return listFiles;
@@ -76,7 +78,7 @@ class LogReader implements ILogReader {
         try (Stream<String> linesStream = Files.lines(file.toPath(), StandardCharsets.UTF_8)) {
             linesStream.forEach(this::parseLine);
         } catch (IOException e) {
-            System.out.println("Ошибка при чтении из файла");
+            log.error("Ошибка при чтении из файла");
         }
     }
     
@@ -112,7 +114,7 @@ class LogReader implements ILogReader {
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
         } catch (ParseException e) {
-            System.out.println("Не удалось распознать дату: " + date);
+            log.error("Не удалось распознать дату: " + date);
             return Optional.empty();
         }
         return Optional.of(calendar.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
