@@ -31,7 +31,8 @@ Result:
 ```
 
 ### How to run
-#####To run from console
+
+#### To run from console
 
 `mvn package`
 
@@ -39,8 +40,8 @@ Result:
 
 `java -jar C:\errorstatistics\target\error-statistics-1.0-SNAPSHOT.jar <package with *.log files> <package for save the statistics file>`    
 
-#####For example:
+#### For example:
 
 `java -jar C:\errorstatistics\target\error-statistics-1.0-SNAPSHOT.jar C:\server\log\ C:\statistics\`    
-#### Important
+### Important
 To run from IntellijIdea have to install the Lombok plugin.
